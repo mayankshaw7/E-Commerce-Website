@@ -1,0 +1,108 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+<%- include('../partials/flash') %>
+
+<!-- Add a stylish background to the entire page -->
+<style>
+  body {
+    background: linear-gradient(to bottom right, #f0f2f5, #dfe9f3);
+  }
+
+  .product-card .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .product-card .card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .like-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.5rem;
+    color: #ff4d4d;
+    cursor: pointer;
+  }
+
+  .like-btn i.fa-regular {
+    color: #bbb;
+  }
+
+  .img {
+    height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+
+  .btnn {
+    background-color: #007bff;
+    color: white;
+    border-radius: 50px;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+  }
+
+  .btnn:hover {
+    background-color: #0056b3;
+  }
+
+  h3.card-title {
+    font-weight: 600;
+    margin-top: 15px;
+    color: #333;
+  }
+
+  .card-text {
+    font-size: 0.9rem;
+    color: #777;
+  }
+
+  .card-title.price {
+    font-weight: bold;
+    color: #ff5733;
+    margin-bottom: 10px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 767px) {
+    .product-card {
+      margin-bottom: 30px;
+    }
+  }
+</style>
+
+<!-- Product Cards Section -->
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <% for(let item of products){ %>
+
+      <div class="col-lg-4 col-md-6 col-sm-12 product-card">
+        <div class="card text-center shadow-sm border-0 mt-3 mx-auto" style="width: 100%;">
+          <div class="position-relative">
+            <img class="img card-img-top" src="<%= item.img %>" alt="<%= item.name %>">
+            <span class="btn like-btn" product-id="<%=item._id%>">
+              <% if(currentUser && currentUser.wishlist.includes(item._id)){ %>
+                <i class="fa-solid fa-heart"></i>
+              <% } else{ %>
+                <i class="fa-regular fa-heart"></i>
+              <% } %>
+            </span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title"><%= item.name %></h3>
+            <h5 class="card-title price">Rs: <%= item.price %></h5>
+            <p class="card-text"><%= item.desc %></p>
+            <a href="/products/<%= item._id %>" class="btn btnn btn-primary">View Product</a>
+          </div>
+        </div>
+      </div>
+
+    <% } %>
+  </div>
+</div>
+
+<script src="/js/common.js"></script>
+
+<%- include('../partials/footer') %>

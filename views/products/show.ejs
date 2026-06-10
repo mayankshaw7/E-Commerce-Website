@@ -1,0 +1,167 @@
+<%-include('../partials/header')%> 
+<%-include('../partials/navbar')%>
+<%-include('../partials/flash')%>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .product-card .card {
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.2s ease;
+    }
+
+    .product-card .card:hover {
+        transform: scale(1.03);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .product-card img {
+        height: 300px;
+        object-fit: cover;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .btn {
+        border-radius: 20px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+    }
+
+    .product-info h3, .product-info h5, .product-info p {
+        color: #112130;
+    }
+
+    .review-section h2 {
+        font-weight: 700;
+    }
+
+    .starability-basic label {
+        font-size: 1.2rem;
+    }
+
+    .review-card {
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .starability-result {
+        font-size: 1rem;
+        color: #ffc107;
+    }
+    
+    .card-footer {
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .review-comment {
+        font-size: 1rem;
+        color: #495057;
+    }
+
+</style>
+
+<div class="row mt-5">
+  <!-- Product Details Section -->
+  <div class="col-lg-6 product-card mt-5">
+    <div class="card shadow mt-3 mx-auto" style="width: 22rem">
+      <img
+        class="img"
+        src="<%=foundProduct.img%>"
+        class="card-img-top"
+        alt="Product Image"
+      />
+      <div class="card-body product-info">
+        <h3 class="card-title text-center"><%= foundProduct.name %></h3>
+        <h5 class="card-title text-center">Price: Rs <%= foundProduct.price %></h5>
+        <p class="card-text"><%= foundProduct.desc %></p>
+        <form action="/buy/<%= foundProduct._id %>" method="GET">
+          <button type="submit" class="btn btn-success w-100 mb-2">Buy Now</button>
+        </form>
+
+        
+        <!-- Add to Cart Button -->
+        <form class="d-inline-block" action="/user/<%=foundProduct._id%>/add" method="POST">
+          <button type="submit" class="btn btn-success w-100 mb-2">Add to Cart</button>
+        </form>
+
+        <!-- Seller-Specific Buttons -->
+        <% if(currentUser && (currentUser.role === "seller" || currentUser.role === "admin")){ %>
+        <a href="/products/<%=foundProduct._id%>/edit" class="btn btn-info w-100 mb-2">Edit</a>
+        <form class="d-inline-block" action="/products/<%=foundProduct._id%>?_method=DELETE" method="POST">
+          <button class="btn btn-danger w-100 mb-2">Delete</button>
+        </form>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review Section -->
+   <% if(currentUser && currentUser.role !== "seller" && currentUser.role !== "admin"){ %>
+  <div class="col-lg-4 mt-5 review-section">
+    <h2 class="display-5">Leave your review</h2>
+    <form action="/products/<%= foundProduct._id %>/review" method="POST">
+      <div class="mb-3">
+        <fieldset class="starability-basic">
+          <input type="radio" id="no-rate" class="input-no-rate" name="rating" value="0" checked aria-label="No rating." />
+          <input type="radio" id="first-rate1" name="rating" value="1" />
+          <label for="first-rate1" title="Terrible">1 star</label>
+          <input type="radio" id="first-rate2" name="rating" value="2" />
+          <label for="first-rate2" title="Not good">2 stars</label>
+          <input type="radio" id="first-rate3" name="rating" value="3" />
+          <label for="first-rate3" title="Average">3 stars</label>
+          <input type="radio" id="first-rate4" name="rating" value="4" />
+          <label for="first-rate4" title="Very good">4 stars</label>
+          <input type="radio" id="first-rate5" name="rating" value="5" />
+          <label for="first-rate5" title="Amazing">5 stars</label>
+        </fieldset>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="comment">Comment: </label>
+        <textarea class="form-control" name="comment" id="comment" rows="3" placeholder="Write your review"></textarea>
+      </div>
+      <button class="btn btn-success btn-sm w-100">Submit</button>
+    </form>
+
+    <!-- Display Reviews -->
+    <div class="my-3">
+      <% for(let review of foundProduct.reviews){ %>
+      <div class="card mb-3 review-card">
+        <div class="card-body">
+          <p class="starability-result" data-rating="<%=review.rating%>"></p>
+          <p class="card-text review-comment">Comment: <%=review.comment%></p>
+          <%if(review.createdAt){%>
+          <p class="text-muted"><%=review.createdAt.toDateString()%></p>
+          <%}%>
+        </div>
+        <div class="card-footer text-right">
+          <button class="btn btn-danger btn-sm">Delete</button>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  </div>
+  <% } %>
+</div>
+
+<%-include('../partials/footer')%>
