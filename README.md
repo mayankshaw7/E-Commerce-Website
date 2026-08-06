@@ -115,7 +115,7 @@ You can also use the pre-built image from Docker Hub:
 
 ```bash
 # Pull the image
-docker pull shreyashdock1601/shopping-app:latest
+docker pull Mayankdock/shopping-app:latest
 
 # Run with a separate MongoDB container
 docker run -d --name mongo mongo:7.0
